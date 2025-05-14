@@ -11,31 +11,9 @@ export const Register = async (req, res, next) => {
       return res.status(400).json({ message: err.message });
     }
 
-    const {
-      name,
-      email,
-      password,
-      title,
-      location,
-      phone,
-      about,
-      skills,
-      languages,
-      certifications,
-    } = req.body;
+    const { name, email, password, role } = req.body;
 
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !title ||
-      !location ||
-      !phone ||
-      !about ||
-      !skills ||
-      !languages ||
-      !certifications
-    ) {
+    if (!name || !email || !password || !role) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -55,19 +33,16 @@ export const Register = async (req, res, next) => {
         name,
         email,
         password: hashedPassword,
-        title,
-        location,
-        phone,
-        about,
-        skills,
-        languages,
-        certifications,
-        profileImage, // Save the image path in the user model
+        role,
       });
 
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-      });
+      const token = jwt.sign(
+        { id: user._id, role: user.role },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "7d",
+        }
+      );
 
       res
         .cookie("token", token, {
@@ -82,7 +57,7 @@ export const Register = async (req, res, next) => {
             id: user._id,
             name: user.name,
             email: user.email,
-            profileImage: user.profileImage, // Send the image path back
+            role: user.role,
           },
         });
     } catch (err) {
@@ -93,6 +68,7 @@ export const Register = async (req, res, next) => {
 
 export const Login = async (req, res, next) => {
   const { email, password } = req.body;
+  console.log("login:", req.body);
 
   if (!email || !password) {
     return res.status(400).json({ message: "All fields are required" });
@@ -111,9 +87,13 @@ export const Login = async (req, res, next) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
 
     res
       .cookie("token", token, {
@@ -144,9 +124,10 @@ export const Logout = async (req, res, next) => {
 };
 
 export const Me = async (req, res, next) => {
+  console.log("token from cookie:", req.cookies.token);
   try {
     const user = await User.findById(req.user.id);
-    res.status(200).json(user);
+    res.status(200).json({ user });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -1,26 +1,31 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Welcome from './components/Welcome';
-import Home from './components/Home';
-import CompanyHome from './components/CompanyHome';
-import Jobs from './components/Jobs';
-import Profile from './components/Profile';
-import Login from './components/Auth/Login';
-import Signup from './components/Auth/Signup';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+
+
+import ProtectedRoute from "./routes/ProtectedRoute";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
+import Home from "./pages/Home";
+import Layout from "./layout/Layout";
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Welcome />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/company-home" element={<CompanyHome />} />
-        <Route path="/jobs" element={<Jobs />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/admin" element={<div>Admin Dashboard (Coming Soon)</div>} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          {/* public routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
+      <Route element={<ProtectedRoute />}>
+        <Route element={<Layout />}>
+          <Route index element={<Home />} />
+          {/* Add more protected routes here */}
+        </Route>
+      </Route>
+        </Routes>
+      </AuthProvider>
     </Router>
   );
 }

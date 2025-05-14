@@ -21,44 +21,10 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
     },
 
-    title: {
+    role: {
       type: String,
-      default: "",
-    },
-
-    location: {
-      type: String,
-      default: "",
-    },
-
-    phone: {
-      type: String,
-      default: "",
-    },
-
-    about: {
-      type: String,
-      default: "",
-    },
-
-    skills: {
-      type: [String],
-      default: [],
-    },
-
-    languages: {
-      type: [String],
-      default: [],
-    },
-
-    certifications: {
-      type: [String],
-      default: [],
-    },
-
-    profileImage: {
-      type: String, // URL or local file path
-      default: "",
+      enum: ["student", "recruiter"],
+      default: "student",
     },
   },
   {

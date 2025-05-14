@@ -1,228 +1,98 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
-import graffitiBg from '../../Graffiti-Art-Background-With-Throw-Up-And-Tagging-Hand-Drawn-Style-Mural-Wallpaper-M.jpg';
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
-const Login = () => {
+function Login({ className, ...props }) {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  const { email, password } = formData;
-
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError('');
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
   };
 
-  const onSubmit = async e => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      });
+  try {
+    const res = await login(formData);
+    console.log("Logged in:", res.user); 
 
-      const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
+    navigate("/");
 
-      // Store user data in localStorage
-      localStorage.setItem('user', JSON.stringify(data.user));
-      
-      // Redirect to home page
-      navigate('/home');
-    } catch (err) {
-      setError(err.message || 'Login failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Styles (matching Home.js styling)
-  const pageStyle = {
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    fontFamily: '"Segoe UI", Arial, sans-serif',
-    backgroundImage: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(${graffitiBg})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundAttachment: 'fixed'
-  };
-
-  const navbarStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '1rem 2rem',
-    backgroundColor: 'white',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-    position: 'sticky',
-    top: 0,
-    zIndex: 100,
-  };
-
-  const logoStyle = {
-    fontSize: '1.5rem',
-    fontWeight: 'bold',
-    color: '#2c3e50',
-  };
-
-  const formContainerStyle = {
-    maxWidth: '500px',
-    margin: '4rem auto',
-    padding: '2rem',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: '10px',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
-  };
-
-  const headingStyle = {
-    fontSize: '2rem',
-    fontWeight: 'bold',
-    marginBottom: '1.5rem',
-    color: '#2c3e50',
-    textAlign: 'center'
-  };
-
-  const formGroupStyle = {
-    marginBottom: '1.5rem',
-  };
-
-  const labelStyle = {
-    display: 'block',
-    marginBottom: '0.5rem',
-    fontSize: '1rem',
-    color: '#34495e',
-    fontWeight: '500'
-  };
-
-  const inputStyle = {
-    width: '100%',
-    padding: '0.8rem',
-    fontSize: '1rem',
-    border: '1px solid #ddd',
-    borderRadius: '5px',
-    transition: 'border-color 0.3s ease',
-  };
-
-  const buttonStyle = {
-    width: '100%',
-    padding: '0.8rem',
-    backgroundColor: '#2c3e50',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    fontSize: '1rem',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
-  };
-
-  const errorStyle = {
-    color: '#e74c3c',
-    marginBottom: '1rem',
-    textAlign: 'center',
-    fontSize: '0.9rem'
-  };
-
-  const linkTextStyle = {
-    textAlign: 'center',
-    marginTop: '1.5rem',
-    fontSize: '0.9rem',
-    color: '#7f8c8d'
-  };
-
-  const linkStyle = {
-    color: '#e74c3c',
-    textDecoration: 'none',
-    fontWeight: '500'
-  };
+  } catch (err) {
+    console.error("Login error:", err.response?.data || err.message);
+  }
+};
 
   return (
-    <div style={pageStyle}>
-      {/* Navigation Bar */}
-      <nav style={navbarStyle}>
-        <motion.div 
-          style={logoStyle}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
-            <span style={{ color: '#e74c3c' }}>Kaam</span>Khoj<span style={{ color: '#e74c3c' }}>.</span>in
-          </Link>
-        </motion.div>
-      </nav>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardDescription>
+            Enter your email and password to log in to your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-6">
+              {/* Email */}
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  autoComplete="email"
+                />
+              </div>
+              {/* Password */}
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Password</Label>
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  autoComplete="current-password"
+                />
+              </div>
 
-      {/* Login Form */}
-      <motion.div 
-        style={formContainerStyle}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 style={headingStyle}>Login to Your Account</h1>
-        
-        {error && <div style={errorStyle}>{error}</div>}
-        
-        <form onSubmit={onSubmit}>
-          <div style={formGroupStyle}>
-            <label style={labelStyle} htmlFor="email">Email Address</label>
-            <input
-              style={inputStyle}
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={onChange}
-              placeholder="Enter your email"
-              required
-            />
-          </div>
-          
-          <div style={formGroupStyle}>
-            <label style={labelStyle} htmlFor="password">Password</label>
-            <input
-              style={inputStyle}
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={onChange}
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-          
-          <button 
-            style={buttonStyle} 
-            type="submit"
-            disabled={loading}
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
-        
-        <p style={linkTextStyle}>
-          Don't have an account? <Link to="/signup" style={linkStyle}>Sign Up</Link>
-        </p>
-      </motion.div>
+              <Button type="submit" className="w-full">
+                Login
+              </Button>
+            </div>
+
+            <div className="mt-4 text-center text-sm">
+              Don&apos;t have an account?{" "}
+              <Link to="/register" className="underline underline-offset-4">
+                Register
+              </Link>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
-};
+}
 
 export default Login;
