@@ -8,10 +8,12 @@ import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import Home from "./pages/Home";
 import Layout from "./layout/Layout";
+import { ThemeProvider } from "./context/DarkMode";
 
 function App() {
   return (
     <Router>
+      <ThemeProvider storageKey="vite-ui-theme" defaultTheme="system">
       <AuthProvider>
         <Routes>
           {/* public routes */}
@@ -26,6 +28,7 @@ function App() {
       </Route>
         </Routes>
       </AuthProvider>
+      </ThemeProvider>
     </Router>
   );
 }
