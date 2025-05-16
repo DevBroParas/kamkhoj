@@ -48,7 +48,7 @@ export const Register = async (req, res, next) => {
         .cookie("token", token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production", // ensures https in prod
-          sameSite: "strict",
+          sameSite: "Lax",
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         })
         .status(200)
@@ -67,8 +67,7 @@ export const Register = async (req, res, next) => {
 };
 
 export const Login = async (req, res, next) => {
-  const { email, password } = req.body;
-  console.log("login:", req.body);
+  const { email, password } = req.body; 
 
   if (!email || !password) {
     return res.status(400).json({ message: "All fields are required" });
@@ -99,7 +98,7 @@ export const Login = async (req, res, next) => {
       .cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production", // ensures https in prod
-        sameSite: "strict",
+        sameSite: "Lax",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .status(200)
@@ -124,7 +123,6 @@ export const Logout = async (req, res, next) => {
 };
 
 export const Me = async (req, res, next) => {
-  console.log("token from cookie:", req.cookies.token);
   try {
     const user = await User.findById(req.user.id);
     res.status(200).json({ user });

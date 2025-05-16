@@ -27,7 +27,7 @@ const handleSubmit = async (e) => {
 
   try {
     const res = await login(formData);
-    console.log("Logged in:", res.user); 
+    
 
 
     navigate("/");

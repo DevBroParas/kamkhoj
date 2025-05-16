@@ -45,7 +45,7 @@ function Register({ className, ...props }) {
     try {
       const res = await register(formData)
       
-      console.log("Registered:", res.data);
+      
 
       navigate("/");
       

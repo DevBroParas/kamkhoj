@@ -9,6 +9,9 @@ import LoginPage from "./pages/LoginPage";
 import Home from "./pages/Home";
 import Layout from "./layout/Layout";
 import { ThemeProvider } from "./context/DarkMode";
+import RecruterTab from "./pages/RecruterTab";
+import StudentTab from "./pages/StudentTab";
+import ApplyForm from "./pages/ApplyForm";
 
 function App() {
   return (
@@ -23,7 +26,9 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route index element={<Home />} />
-          {/* Add more protected routes here */}
+          <Route path="/recruters" element={<RecruterTab />} />
+          <Route path="/jobs" element={<StudentTab />} />
+          
         </Route>
       </Route>
         </Routes>

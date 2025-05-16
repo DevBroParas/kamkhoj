@@ -20,6 +20,7 @@ export const AuthProvider = ({children}) => {
     const login = async (formData) => {
         const response = await loginApi(formData);
         setUser(response.data.user);
+        navigate("/");
         return response.data;
     }
 
@@ -36,7 +37,7 @@ useEffect(() => {
     setLoading(true); // ✅ Ensure loading starts as true
     try {
       const response = await meApi();
-      console.log(response);
+      
       setUser(response.data.user); // or response.data.user
     } catch (err) {
       setUser(null);
@@ -48,11 +49,8 @@ useEffect(() => {
   fetchUser();
 }, []);
 
-useEffect(() => {
-        if (user) {
-            navigate("/"); // Redirect to the home page if the user is logged in
-        }
-    }, [user, navigate]);
+
+
 
 
     return (
